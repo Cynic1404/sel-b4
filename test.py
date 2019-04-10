@@ -11,6 +11,9 @@ def driver(request):
 
 
 def test_example(driver):
-    driver.get("https://msk.software-testing.ru/")
-    driver.find_element_by_xpath("//a[@href='http://selenium2.ru/']").click()
+    driver.get("http://localhost/litecart/admin/")
+    driver.find_element_by_name("username").send_keys("admin")
+    driver.find_element_by_name("password").send_keys("admin")
+    driver.find_element_by_name("login").click()
+
 
