@@ -1,5 +1,6 @@
 import pytest
 from selenium import webdriver
+from time import sleep
 
 
 @pytest.fixture
@@ -31,3 +32,9 @@ def test_all_tabs(driver):
 
 
 
+def test_stickers(driver):
+    driver.get("http://localhost/litecart/en/")
+    sleep(1)
+    items = driver.find_elements_by_xpath('//li[@class="product column shadow hover-light"]')
+    for i in range(1,len(items)):
+        assert len(items[i].find_elements_by_xpath('.//div[contains(@class, "sticker")]')) == 1
