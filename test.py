@@ -38,3 +38,44 @@ def test_stickers(driver):
     items = driver.find_elements_by_xpath('//li[@class="product column shadow hover-light"]')
     for i in range(1,len(items)):
         assert len(items[i].find_elements_by_xpath('.//div[contains(@class, "sticker")]')) == 1
+
+def test_sort_country(driver):
+    test_login(driver)
+    driver.get("http://localhost/litecart/admin/?app=countries&doc=countries")
+    countries = list(map(return_country, driver.find_elements_by_xpath("//tr[@class='row']/td[5]")))
+    assert sorted(countries) == countries
+
+def test_sort_subcountry(driver):
+    test_login(driver)
+    page = "http://localhost/litecart/admin/?app=countries&doc=countries"
+    driver.get(page)
+    megacountry = []
+    for i in driver.find_elements_by_xpath("//tr[@class='row']"):
+        if int(i.find_element_by_xpath("./td[6]").text) > 0:
+            megacountry.append(i.find_element_by_xpath("./td[5]").text)
+    for country in megacountry:
+        subcountries = []
+        driver.get(page)
+        driver.find_element_by_link_text(country).click()
+        for sub in driver.find_elements_by_xpath('//input[contains(@name, "zones") and contains(@name, "name")]'):
+            subcountries.append(sub.get_attribute("value"))
+            assert subcountries == sorted(subcountries)
+
+
+def test_geozones(driver):
+    test_login(driver)
+    page = "http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones"
+    driver.get(page)
+    megacountry = []
+    for i in driver.find_elements_by_xpath('//table[@class="dataTable"]//a[not(@title)]'):
+        megacountry.append(i.text)
+    for i in megacountry:
+        driver.get(page)
+        driver.find_element_by_link_text(i).click()
+        sumcountries = list(map(return_country, driver.find_elements_by_xpath('//select[contains(@name, "zones") and contains(@name, "zone_code")]/option[@selected]')))
+        assert sumcountries == sorted(sumcountries)
+
+
+def return_country(x):
+    return x.text
+
