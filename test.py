@@ -80,6 +80,7 @@ def test_geozones(driver):
         sumcountries = list(map(return_country, driver.find_elements_by_xpath('//select[contains(@name, "zones") and contains(@name, "zone_code")]/option[@selected]')))
         assert sumcountries == sorted(sumcountries)
 
+#TASK 10
 def test_product(driver):
     driver.implicitly_wait(5)
     driver.get("http://localhost/litecart/en/")
@@ -100,6 +101,7 @@ def test_product(driver):
         assert check_red_color(color_deal)
         assert check_grey_color(color_regular)
         assert item.find_element_by_css_selector('.regular-price').value_of_css_property("font-size") < item.find_element_by_css_selector('.campaign-price').value_of_css_property("font-size")
+        assert (item.find_element_by_css_selector('.regular-price').value_of_css_property("text-decoration")).split()[0] == 'line-through'
         sale = True
 
     item.click()
@@ -111,6 +113,7 @@ def test_product(driver):
         deal_price_on_page = driver.find_element_by_css_selector('.campaign-price')
         assert product.deal_price == deal_price_on_page.text
         assert regular_price_on_page.value_of_css_property("font-size") < deal_price_on_page.value_of_css_property("font-size")
+        assert (regular_price_on_page.value_of_css_property("text-decoration")).split()[0] == 'line-through'
 
     else:
         assert product.regular_price == driver.find_element_by_xpath('//span[@itemprop="price"]').text
