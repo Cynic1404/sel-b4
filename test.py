@@ -5,10 +5,10 @@ from time import sleep
 
 @pytest.fixture
 def driver(request):
-    #wd = webdriver.Firefox(capabilities={"marionette": True}, executable_path="C:\Python\geckodriver.exe")
+    wd = webdriver.Firefox(capabilities={"marionette": True}, executable_path="C:\Python\geckodriver.exe")
     #wd = webdriver.Firefox()
     #wd = webdriver.Edge()
-    wd = webdriver.Chrome()
+    #wd = webdriver.Chrome()
     request.addfinalizer(wd.quit)
     return wd
 
@@ -20,7 +20,7 @@ def test_login(driver):
     driver.find_element_by_name("login").click()
 
 
-
+#TASK 7
 def test_all_tabs(driver):
     test_login(driver)
     for el in range(len(driver.find_elements_by_xpath('//li[@id="app-"]'))):
@@ -31,19 +31,21 @@ def test_all_tabs(driver):
             driver.find_element_by_xpath("//h1")
 
 
-
+#TASK 8
 def test_stickers(driver):
     driver.get("http://localhost/litecart/en/")
     sleep(1)
-    items = driver.find_elements_by_xpath('//li[@class="product column shadow hover-light"]')
+    items = driver.find_elements_by_xpath('//li[contains(@class,"product")]')
     for i in range(1,len(items)):
         assert len(items[i].find_elements_by_xpath('.//div[contains(@class, "sticker")]')) == 1
 
+#TASK 9.1
 def test_sort_country(driver):
     test_login(driver)
     driver.get("http://localhost/litecart/admin/?app=countries&doc=countries")
     countries = list(map(return_country, driver.find_elements_by_xpath("//tr[@class='row']/td[5]")))
     assert sorted(countries) == countries
+
 
 def test_sort_subcountry(driver):
     test_login(driver)
@@ -61,7 +63,7 @@ def test_sort_subcountry(driver):
             subcountries.append(sub.get_attribute("value"))
             assert subcountries == sorted(subcountries)
 
-
+#TASK 9.2
 def test_geozones(driver):
     test_login(driver)
     page = "http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones"
