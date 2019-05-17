@@ -2,7 +2,8 @@ from time import sleep
 from functions import *
 from product import Product
 from new_user import NewUser
-
+import os
+from selenium.webdriver.support.ui import Select
 
 def test_login(app):
     app.get("http://localhost/litecart/admin/")
@@ -121,4 +122,40 @@ def test_registration(app):
     login(app, new_user.email, new_user.password)
     logout(app)
 
+#TASK 12
+def test_add_poruct(app):
+    test_login(app)
+    app.find_element_by_xpath('//span[@class="name"][contains(text(), "Catalog")]').click()
+    app.find_element_by_xpath("//a[contains(text(), 'Add New Product')]").click()
 
+#general
+    app.find_element_by_xpath("//label/input[@value='1']").click()
+    app.find_element_by_name("name[en]").send_keys("Tovar")
+    app.find_element_by_name("code").send_keys("123456")
+    app.find_element_by_xpath("//div[@class='input-wrapper'][.//strong[contains(text(), 'Gender')]]//input[@type='checkbox']").click()
+    app.find_element_by_name("new_images[]").send_keys(os.path.abspath("item.jpg"))
+    app.find_element_by_name("date_valid_from").send_keys("05012019")
+    app.find_element_by_name("date_valid_to").send_keys("05012020")
+
+#information
+
+    app.find_element_by_xpath('//a[@href="#tab-information"]').click()
+    select = Select(app.find_element_by_xpath('//select[@name="manufacturer_id"]'))
+    select.select_by_visible_text('ACME Corp.')
+    app.find_element_by_name("keywords").send_keys("cars, car, zhiguli")
+    app.find_element_by_name("short_description[en]").send_keys("luxury")
+    app.find_element_by_xpath('//div[@class="trumbowyg-editor"]').send_keys("Drive or be driven? From the timeless appeal of Phantom to the fearless attitude of Black Badge, explore our Showroom and find your perfect Rolls-Royce.")
+
+#prices
+    app.find_element_by_xpath('//a[@href="#tab-prices"]').click()
+    app.find_element_by_name("purchase_price").send_keys(750000)
+
+    select = Select(app.find_element_by_name('purchase_price_currency_code'))
+    select.select_by_value("USD")
+
+    select2 = Select(app.find_element_by_name('tax_class_id'))
+    select2.select_by_value("1")
+
+    app.find_element_by_name("gross_prices[USD]").send_keys(1000000)
+    app.find_element_by_xpath("//button[@type='submit']").click()
+    assert len(app.find_elements_by_xpath("//tr[@class='row'][.//a[@title = 'Edit']]//a[contains(text(), 'Tovar')]"))>0
